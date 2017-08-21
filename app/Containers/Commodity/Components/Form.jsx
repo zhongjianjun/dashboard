@@ -9,7 +9,6 @@ function Component({
     onOk, changeFormClass
  }) {
 
-    console.log(image, "图片的值");
     //返回
     const handleCancel = () => {
         form.resetFields()
@@ -42,50 +41,50 @@ function Component({
     return (
         <Form layout='horizontal' className={styles.form}>
 
-            <Form.Item label="产品名称" {...formItemLayout}>
+            <Form.Item label="商品名称" {...formItemLayout}>
                 {form.getFieldDecorator('name', {
                     initialValue: name,
-                    rules: [{ required: true, message: '请输入产品名称!' }],
+                    rules: [{ required: true, message: '请输入商品名称!' }],
                 })(
-                    <Input type="text" placeholder="请输入产品名称" maxLength={30} />
+                    <Input type="text" placeholder="请输入商品名称" maxLength={30} />
                     )}
             </Form.Item>
 
-            <Form.Item label="产品编号" {...formItemLayout}>
+            <Form.Item label="商品编号" {...formItemLayout}>
                 {form.getFieldDecorator('identifier', {
                     initialValue: identifier,
-                    rules: [{ required: true, message: '请输入产品编号!' }, { pattern: /^[0-9a-zA-Z]*$/g, message: "请输入产品编号格式有误!" }],
+                    rules: [{ required: true, message: '请输入商品编号!' }, { pattern: /^[0-9a-zA-Z]*$/g, message: "输入商品编号格式有误!" }],
                 })(
-                    <Input type="text" placeholder="请输入产品编号" maxLength={30} />
+                    <Input type="text" placeholder="请输入商品编号" maxLength={30} />
                     )}
             </Form.Item>
 
-            <Form.Item label="产品图片" {...formItemLayout}>
-                {console.log('test image',image)}
+            <Form.Item label="商品图片" {...formItemLayout}>
+                {console.log('图片的值:',image)}
                 {form.getFieldDecorator('image', {
                     initialValue: image,
                     getValueFromEvent: handleChangeImage,
-                    rules: [{ required: true, message: '请上传产品图片!' }],
+                    rules: [{ required: true, message: '请上传商品图片!' }],
                 })(
                     <PicturesWall onChange={handleChangeImage} />
                     )}
             </Form.Item>
 
-            <Form.Item label="产品价格" {...formItemLayout}>
+            <Form.Item label="商品价格" {...formItemLayout}>
                 {form.getFieldDecorator('price', {
                     initialValue: price,
-                    rules: [{ required: true, message: '请输入产品价格!' }, { pattern: /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/, message: "请输入产品价格格式有误!" }],
+                    rules: [{ required: true, message: '请输入商品价格!' }, { pattern: /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/, message: "输入商品价格格式有误!" }],
                 })(
-                    <Input type="text" addonAfter="元" placeholder="请输入产品价格" />
+                    <Input type="text" addonAfter="元" placeholder="请输入商品价格" />
                     )}
             </Form.Item>
 
-            <Form.Item label="产品数量" {...formItemLayout}>
+            <Form.Item label="商品数量" {...formItemLayout}>
                 {form.getFieldDecorator('num', {
                     initialValue: num,
-                    rules: [{ required: true, message: '请输入产品数量!' }, { pattern: /^\+?[1-9]\d*$/, message: "请输入产品数量格式有误!" }],
+                    rules: [{ required: true, message: '请输入商品数量!' }, { pattern: /^\+?[1-9]\d*$/, message: "输入商品数量格式有误!" }],
                 })(
-                    <Input type="text" placeholder="请输入产品数量" max={30} />
+                    <Input type="text" placeholder="请输入商品数量" max={30} />
                     )}
             </Form.Item>
 
@@ -93,7 +92,7 @@ function Component({
                 {form.getFieldDecorator('content', {
                     initialValue: content,
                 })(
-                    <Input type="textarea" placeholder="请输入备注" maxLength={100} />
+                    <Input type="textarea" placeholder="请输入备注" maxLength={100}  rows={4} />
                     )}
             </Form.Item>
 

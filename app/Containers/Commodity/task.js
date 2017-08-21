@@ -34,7 +34,7 @@ const initCommodity = (value) =>
     await dispatch(updateState({
       name: '',
       identifier: '',
-      image: '',
+      image: [],
       price: '',
       num: '',
       content: '',
@@ -190,9 +190,20 @@ const checkColumn = () =>
       }))
     }
   }
+//分页
+const changePage = (values) =>
+  async (dispatch, getState) => {
+    console.log('changePage', getState(), values)
+    dispatch(updateState({...values, tableLoading: true}))
+    const params = getState().commodity
+
+    await ajaxGoodsList(dispatch, {...params})
+
+    dispatch(updateState({tableLoading: false}))
+  }
 
 
 export {
   updateState, initCommodity,
-  searchAdList, resetAdList, toEdit, add, edit, confirmDelete, resetFormAdd, checkColumn
+  searchAdList, resetAdList, toEdit, add, edit, confirmDelete, resetFormAdd, checkColumn, changePage
 }

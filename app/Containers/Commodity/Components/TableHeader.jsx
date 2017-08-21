@@ -7,7 +7,7 @@ function TableHeader({ loading, onClick }) {
       loading={loading}
       onClick={onClick}
       style={{ marginBottom: '20px' }}
-    >新增产品</Button>
+    >新增商品</Button>
   )
 }
 

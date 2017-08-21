@@ -6,17 +6,33 @@ import styles from './Form.pcss'
 
 function Component({
   form, buttonOkDisabled, buttonOkLoading,
-  formName, formImage, formQuota, formPrice, formSurplus, formSort, formClass, formClasses, formUrl,
-  onOk, changeFormClass
+  formName, formImage, formQuota, formPrice, formSurplus, formSort, formClass, formClasses, formUrl, formFurniturePrice, formFurnitureNum, selectedGoods, unit_price,
+  onOk, changeFormClass, onOpenModal
  }) {
   process.env.NODE_ENV === 'production' || console.log(formClasses)
 
-  console.log(formImage,"套餐图片");
+  const formItemLayout2 = {
+    wrapperCol: {
+      xs: {
+        span: 24,
+        offset: 0,
+      },
+      sm: {
+        span: 21,
+        offset: 3,
+      },
+    },
+  }
 
   const formItemLayout = {
-    labelCol: { span: 4 },
-    wrapperCol: { span: 14 },
-    style: { maxWidth: '600px' }
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 3 },
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 21 },
+    },
   }
 
   const handleOk = (e) =>
@@ -42,115 +58,257 @@ function Component({
     changeFormClass({ formClass: e.target.value })
   }
 
+
   const handleChangeImage = (urls) => urls
 
+
   return (
-    <Form layout='horizontal' className={styles.form}>
-      <Form.Item {...formItemLayout} label="套餐类型">
-        {form.getFieldDecorator('formClass', {
-          initialValue: formClass,
-          rules: [{ required: true, message: '请选择套餐类型!' }],
-        })(
-          <Radio.Group onChange={handleChangeFormClass}>
-            {formClasses.map((value, index) =>
-              <Radio key={index}
-                value={String(value.value)}
-              >{value.name}</Radio>)
-            }
-          </Radio.Group>
-          )}
-      </Form.Item>
-      <Form.Item label="套餐名称" {...formItemLayout}>
-        {form.getFieldDecorator('formName', {
-          initialValue: formName,
-          rules: [{ required: true, message: '请输入套餐名称!' }],
-        })(
-          <Input type="text" placeholder="请输入套餐名称" />
-          )}
-      </Form.Item>
-      <Form.Item label="排序" {...formItemLayout}>
-        {form.getFieldDecorator('formSort', {
-          initialValue: formSort,
-          rules: [{ required: true, message: '请输入排序!' }],
-        })(
-          <Input type="text" placeholder="请输入排序" />
-          )}
-      </Form.Item>
-      <Form.Item label="套餐首图" {...formItemLayout}>
-        {form.getFieldDecorator('formImage', {
-          initialValue: formImage,
-          getValueFromEvent: handleChangeImage,
-          rules: [{ required: true, message: '请上传套餐首图!' }],
-        })(
-          <PicturesWall onChange={handleChangeImage} />
-          )}
-      </Form.Item>
-      {
-        formClass === '1'
-          ? <Form.Item label="套餐单价" {...formItemLayout}>
-            {form.getFieldDecorator('formPrice', {
-              initialValue: formPrice,
-              rules: [
-                { type: "string", pattern: /^[1-9]\d{0,5}$/, required: true, message: '最多输入六位正整数!' },
-              ],
-            })(
-              <Input type="text" addonAfter="元/㎡" placeholder="请输入套餐单价" />
-              )}
-          </Form.Item>
-          : null
-      }  {
-        formClass === '2'
-          ? <Form.Item label="URL" {...formItemLayout}>
-            {form.getFieldDecorator('formUrl', {
-              initialValue: formUrl,
-              rules: [
-                { required: true, message: '值不能为空!' },
-                {
-                  pattern: /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/g,
-                  message: '请输入正确的url!'
-                },
-              ],
-            })(
-              <Input type="text" placeholder="请输入url" />
-              )}
-          </Form.Item>
-          : null
-      }
-      <Form.Item label="限额" {...formItemLayout}>
-        {form.getFieldDecorator('formQuota', {
-          initialValue: formQuota,
-        })(
-          <Input type="text" placeholder="请输入限额" />
-          )}
-      </Form.Item>
-      <Form.Item label="剩余" {...formItemLayout}>
-        {form.getFieldDecorator('formSurplus', {
-          initialValue: formSurplus,
-          validateTrigger: ['onChange', 'onBlur'],
-          rules: [{
-            validator: (rule, value, callback) => {
-              if (value && value > form.getFieldValue('formQuota')) {
-                callback('剩余不能比限额多!')
+
+    < div >
+      <Form layout='horizontal' className={styles.form}>
+
+        <Form.Item {...formItemLayout} label="套餐类型">
+          {form.getFieldDecorator('formClass', {
+            initialValue: formClass,
+            rules: [{ required: true, message: '请选择套餐类型!' }],
+          })(
+            <Radio.Group onChange={handleChangeFormClass}>
+              {formClasses.map((value, index) =>
+                <Radio key={index}
+                  value={String(value.value)}
+                >{value.name}</Radio>)
               }
-              callback()
-            },
-            message: '剩余不能比限额多!'
-          }],
-        })(
-          <Input type="text" placeholder="请输入剩余数量" />
-          )}
-      </Form.Item>
-      <Form.Item style={{ maxWidth: '600px' }} wrapperCol={{ span: 8, offset: 4 }}>
-        <Button
-          type="primary"
-          onClick={handleOk}
-          loading={buttonOkLoading}
-          disabled={buttonOkDisabled}
-        >{(buttonOkDisabled) ? '已保存' : '保存'}
-        </Button>
-      </Form.Item>
-    </Form>
-  )
+            </Radio.Group>
+            )}
+        </Form.Item>
+
+        <Form.Item label="套餐名称" {...formItemLayout}>
+          {form.getFieldDecorator('formName', {
+            initialValue: formName,
+            rules: [{ required: true, message: '请输入套餐名称!' }],
+          })(
+            <Input type="text" placeholder="请输入套餐名称" style={{ maxWidth: '50%' }} />
+            )}
+        </Form.Item>
+
+        <Form.Item label="排序" {...formItemLayout}>
+          {form.getFieldDecorator('formSort', {
+            initialValue: formSort,
+            rules: [{ required: true, message: '请输入排序!' }],
+          })(
+            <Input type="text" placeholder="请输入排序" style={{ maxWidth: '50%' }} />
+            )}
+        </Form.Item>
+
+        <Form.Item label="套餐首图" {...formItemLayout}>
+          {form.getFieldDecorator('formImage', {
+            initialValue: formImage,
+            getValueFromEvent: handleChangeImage,
+            rules: [{ required: true, message: '请上传套餐首图!' }],
+          })(
+            <PicturesWall onChange={handleChangeImage} />
+            )}
+        </Form.Item>
+        {/*家装*/}
+        {
+          formClass === '1'
+            ? <Form.Item label="套餐单价" {...formItemLayout}>
+              {form.getFieldDecorator('formPrice', {
+                initialValue: formPrice,
+                rules: [
+                  { type: "string", pattern: /^[1-9]\d{0,5}$/, required: true, message: '最多输入六位正整数!' },
+                ],
+              })(
+                <Input type="text" addonAfter="元/㎡" placeholder="请输入套餐单价" style={{ maxWidth: '50%' }} />
+                )}
+            </Form.Item>
+            : null
+        }
+        {/*家居*/}
+        {
+          formClass === '2'
+            ?
+            <div>
+
+              <Form.Item label="URL" {...formItemLayout}>
+                {form.getFieldDecorator('formUrl', {
+                  initialValue: formUrl,
+                  rules: [
+                    { required: true, message: '值不能为空!' },
+                    {
+                      pattern: /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/g,
+                      message: '请输入正确的url!'
+                    },
+                  ],
+                })(
+                  <Input type="text" placeholder="请输入url" style={{ maxWidth: '50%' }} />
+                  )}
+              </Form.Item>
+
+              <Form.Item label="家居价格" {...formItemLayout}>
+                {form.getFieldDecorator('formFurniturePrice', {
+                  initialValue: formFurniturePrice,
+                  rules: [{ required: true, message: '请输入家居价格!' }],
+                })(
+                  <Input type="text" addonAfter="元" placeholder="请输入家居价格" style={{ maxWidth: '50%' }} />
+                  )}
+              </Form.Item>
+
+              <Form.Item label="家居件数" {...formItemLayout}>
+                {form.getFieldDecorator('formFurnitureNum', {
+                  initialValue: formFurnitureNum,
+                  rules: [{ required: true, message: '请输入家居件数!' }],
+                })(
+                  <Input type="text" addonAfter="件" placeholder="请输入家居件数" style={{ maxWidth: '50%' }} />
+                  )}
+              </Form.Item>
+
+              <Form.Item label="家居产品" {...formItemLayout}>
+                {form.getFieldDecorator('selectedGoods', {
+                  rules: [{ required: true, message: '请选择商品!' }],
+                })(
+                  <div>
+                    <Button onClick={onOpenModal}>选择商品</Button>
+                    <Row gutter={16} className={styles.goodslistbox}>
+                      {
+                        selectedGoods.map((value, index) =>
+                          <Col span={6} key={index} className={styles.goodslist}>
+                            <img src={value.image} alt={value.name} className={styles.goodsimg} />
+                            <div className={styles.goodsname}>{value.name}</div>
+                            <div className={styles.goodsnum}>数量：<Input type="text" placeholder="请输入数量" value={value.num} style={{ width: '40%' }}/></div>
+                          </Col>
+                        )
+                      }
+                    </Row>
+                  </div>
+                  )}
+              </Form.Item>
+            </div>
+            : null
+        }
+        {/*家装+家居*/}
+        {
+          formClass === '3'
+            ?
+            <div>
+              <Form.Item label="套餐价格" {...formItemLayout}>
+                {form.getFieldDecorator('unit_price', {
+                  initialValue: unit_price,
+                  rules: [
+                    { type: "string", pattern: /^[1-9]\d{0,5}$/, required: true, message: '最多输入六位正整数!' },
+                  ],
+                })(
+                  <Input type="text" addonAfter="元/㎡" placeholder="请输入套餐价格" style={{ maxWidth: '50%' }} />
+                  )}
+              </Form.Item>
+
+              <Form.Item label="家装价格" {...formItemLayout}>
+                {form.getFieldDecorator('formPrice', {
+                  initialValue: formPrice,
+                  rules: [
+                    { type: "string", pattern: /^[1-9]\d{0,5}$/, required: true, message: '最多输入六位正整数!' },
+                  ],
+                })(
+                  <Input type="text" addonAfter="元/㎡" placeholder="请输入家装价格" style={{ maxWidth: '50%' }} />
+                  )}
+              </Form.Item>
+
+              <Form.Item label="URL" {...formItemLayout}>
+                {form.getFieldDecorator('formUrl', {
+                  initialValue: formUrl,
+                  rules: [
+                    { required: true, message: '值不能为空!' },
+                    {
+                      pattern: /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/g,
+                      message: '请输入正确的url!'
+                    },
+                  ],
+                })(
+                  <Input type="text" placeholder="请输入url" style={{ maxWidth: '50%' }} />
+                  )}
+              </Form.Item>
+
+              <Form.Item label="家居价格" {...formItemLayout}>
+                {form.getFieldDecorator('formFurniturePrice', {
+                  initialValue: formFurniturePrice,
+                  rules: [{ required: true, message: '请输入家居价格!' }],
+                })(
+                  <Input type="text" addonAfter="元" placeholder="请输入家居价格" style={{ maxWidth: '50%' }} />
+                  )}
+              </Form.Item>
+
+              <Form.Item label="家居件数" {...formItemLayout}>
+                {form.getFieldDecorator('formFurnitureNum', {
+                  initialValue: formFurnitureNum,
+                  rules: [{ required: true, message: '请输入家居件数!' }],
+                })(
+                  <Input type="text" addonAfter="件" placeholder="请输入家居件数" style={{ maxWidth: '50%' }} />
+                  )}
+              </Form.Item>
+
+              <Form.Item label="家居产品" {...formItemLayout}>
+                {form.getFieldDecorator('selectedGoods', {
+                  rules: [{ required: true, message: '请选择商品!' }],
+                })(
+                  <div>
+                    <Button onClick={onOpenModal}>选择商品</Button>
+                    <Row gutter={16} className={styles.goodslistbox}>
+                      {
+                        selectedGoods.map((value, index) =>
+                          <Col span={6} key={index} className={styles.goodslist}>
+                            <img src={value.image} alt={value.name} className={styles.goodsimg} />
+                            <div className={styles.goodsname}>{value.name}</div>
+                            <div className={styles.goodsnum}>数量：<Input type="text" placeholder="请输入数量" value={value.num} style={{ width: '40%' }}/></div>
+                          </Col>
+                        )
+                      }
+                    </Row>
+                  </div>
+                  )}
+              </Form.Item>
+            </div>
+            : null
+        }
+
+        <Form.Item label="限额" {...formItemLayout}>
+          {form.getFieldDecorator('formQuota', {
+            initialValue: formQuota,
+          })(
+            <Input type="text" placeholder="请输入限额" style={{ maxWidth: '50%' }} />
+            )}
+        </Form.Item>
+
+        <Form.Item label="剩余" {...formItemLayout}>
+          {form.getFieldDecorator('formSurplus', {
+            initialValue: formSurplus,
+            validateTrigger: ['onChange', 'onBlur'],
+            rules: [{
+              validator: (rule, value, callback) => {
+                if (value && value > form.getFieldValue('formQuota')) {
+                  callback('剩余不能比限额多!')
+                }
+                callback()
+              },
+              message: '剩余不能比限额多!'
+            }],
+          })(
+            <Input type="text" placeholder="请输入剩余数量" style={{ maxWidth: '50%' }} />
+            )}
+        </Form.Item>
+        <Form.Item  {...formItemLayout2}>
+          <Button
+            type="primary"
+            onClick={handleOk}
+            loading={buttonOkLoading}
+            disabled={buttonOkDisabled}
+          >{(buttonOkDisabled) ? '已保存' : '保存'}
+          </Button>
+        </Form.Item>
+      </Form>
+
+
+    </div >
+  );
 }
 
 Component = Form.create({})(Component)

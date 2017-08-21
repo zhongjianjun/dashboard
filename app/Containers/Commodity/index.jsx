@@ -13,11 +13,11 @@ import {
   searchAdList,
   resetAdList,
   toEdit,
-  confirmDelete
+  confirmDelete,
+  changePage,
 } from './task'//
 
 function Component({ dispatch, props, app }) {
-
   //分页
   const paginationProps = {
     className: 'y-card-pagination',

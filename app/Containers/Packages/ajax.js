@@ -3,7 +3,7 @@ import { updateState } from './task'
 import { updateState as updateAppState } from '../App/task'
 
 /* ===== index =====*/
-
+//套餐列表
 async function ajaxList(dispatch, params) {
   await new Promise((resolve, reject) =>
     ajax(
@@ -61,7 +61,7 @@ async function ajaxPreview(dispatch, id) {
 }
 
 /* ===== add =====*/
-
+//套餐新增
 async function ajaxAdd(dispatch, value) {
   await new Promise((resolve, reject) =>
     ajax(
@@ -87,7 +87,7 @@ async function ajaxAdd(dispatch, value) {
 }
 
 /* ===== edit =====*/
-
+//套餐查看
 async function ajaxEditInfo(dispatch, id) {
   await new Promise((resolve, reject) =>
     ajax(
@@ -137,7 +137,7 @@ async function ajaxEdit(dispatch, value) {
 }
 
 /* ===== column =====*/
-
+//套餐栏目类型
 async function ajaxColumnStyles(dispatch) {
   await new Promise((resolve, reject) =>
     ajax(
@@ -268,6 +268,28 @@ async function ajaxDeleteColumn(value) {
   )
 }
 
+//商品列表
+async function ajaxGoodsList(dispatch, params) {
+  await new Promise((resolve) =>
+    ajax(
+      'website/goods/list',
+      {
+        identifier: params.identifier,
+        name: params.name,
+        status: params.status
+      },
+      resolve,
+      resolve,
+      (response) => {
+        resolve()
+        dispatch(updateState({
+          tableData2: response.data.list,
+          tableTotals: (response.data.totals) ? Number(response.data.totals) : 0,
+        }))
+      }
+    )
+  )
+}
 
 export {
   ajaxList,
@@ -282,4 +304,5 @@ export {
   ajaxDeleteLive,
   ajaxEditInfo,
   ajaxEdit,
+  ajaxGoodsList,
 }

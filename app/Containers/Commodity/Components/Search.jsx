@@ -30,15 +30,15 @@ function Search({ form, onSearch, onReset, adBlowOptions, buttonSearchLoading, b
     <Card className="y-m-b-20">
       <Form layout='inline' className={styles.form}>
 
-        <Form.Item label="产品名称" {...formItemLayout}>
+        <Form.Item label="商品名称" {...formItemLayout}>
           {form.getFieldDecorator('name')(
-            <Input type="text" placeholder="请输入产品名称" />
+            <Input type="text" placeholder="请输入商品名称" />
           )}
         </Form.Item>
 
-        <Form.Item label="产品编码" {...formItemLayout}>
+        <Form.Item label="商品编码" {...formItemLayout}>
           {form.getFieldDecorator('identifier')(
-            <Input type="text" placeholder="请输入产品编码" />
+            <Input type="text" placeholder="请输入商品编码" />
           )}
         </Form.Item>
 

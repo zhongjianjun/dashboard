@@ -11,10 +11,11 @@ import From from './Components/Form.jsx'
 import FormStyles from './Components/FormStyles.jsx'
 import ModalIntro from './Components/ModalIntro.jsx'
 import ModalColumns from './Components/ModalColumns.jsx'
+import ModalCommodity from './Components/ModalCommodity.jsx';//选择商品弹框
 import styles from './Components/index.pcss'
 import {
   updateState, preview, toggleStatus, toggleRecommendation, add, edit,
-  selectColumnsStyle, addColumn, editColumn, deleteColumn,
+  selectColumnsStyle, addColumn, editColumn, deleteColumn, showTable, searchAdList, resetAdList, selectGoodsList,
 } from './task'
 
 function Component({ dispatch, props, app }) {
@@ -66,6 +67,10 @@ function Component({ dispatch, props, app }) {
     formSurplus: props.formSurplus,
     buttonOkLoading: props.formSaveLoading,
     buttonOkDisabled: props.formSaveDisabled,
+    formFurniturePrice: props.formFurniturePrice,//家居价格
+    formFurnitureNum: props.formFurnitureNum,//家居件数
+    selectedGoods: props.selectedGoods,//选择的商品数据
+    unit_price: props.unit_price,//套餐价格
     // buttonCancelLoading: props.buttonResetLoading,
     onOk(value) {
       notRepeating(
@@ -86,6 +91,10 @@ function Component({ dispatch, props, app }) {
     onCancel(value) {
       console.log('onCancel')
     },
+    onOpenModal(){//点击显示弹框
+      notRepeating(() => dispatch(showTable()))
+      dispatch(updateState({ modalCommodityVisible: true }))
+    }
   }
 
   const buttonProps = {
@@ -138,6 +147,30 @@ function Component({ dispatch, props, app }) {
     },
   }
 
+//选择商品弹框
+  const ModalCommodityProps = {
+    visible: props.modalCommodityVisible,
+    buttonResetLoading: props.buttonResetLoading,
+    buttonSearchLoading: props.buttonSearchLoading,
+    dataSource: props.tableData2,
+    loading: props.tableLoading,
+    onOK(values) {
+      dispatch(selectGoodsList(values))
+    },
+    onCancel() {
+      dispatch(updateState({ modalCommodityVisible: false }))
+    },
+    onSearch(values) {
+      notRepeating(() => dispatch(searchAdList(values)))
+    },
+    onReset(values) {
+      notRepeating(() => dispatch(resetAdList(values)))
+    },
+    onChange(selectedRowKeys, selectedRows){
+      dispatch(updateState({ selectedRows: selectedRows }))
+    }
+  }
+
   return (
     <div>
       <Breadcrumb {...breadcrumbProps} />
@@ -147,14 +180,16 @@ function Component({ dispatch, props, app }) {
         <hr className={styles.hr} />
         <FormStyles {...formStylesProps} />
         <Button {...buttonProps}>新增栏目</Button>
-        <ModalIntro{...modalIntroProps} />
-        <ModalColumns{...modalColumnsProps} />
+        <ModalIntro {...modalIntroProps} />
+        <ModalColumns {...modalColumnsProps} />
+        <ModalCommodity {...ModalCommodityProps} />
       </Card>
     </div>
   )
 }
 
 export default connect(state => {
+  console.log(state.packages,123456);
   return {
     app: state.app,
     props: state.packages,

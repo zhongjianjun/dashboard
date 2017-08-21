@@ -7,22 +7,22 @@ function NewTable({ loading, dataSource, toggleRecommendation, toggleStatus, onE
 
   const columns = [{
     key: 'identifier',
-    title: '产品编码',
+    title: '商品编码',
     dataIndex: 'identifier',
     render: renderColumns
   }, {
     key: 'name',
-    title: '产品名称',
+    title: '商品名称',
     dataIndex: 'name',
     render: renderColumns
   }, {
     key: 'price',
-    title: '产品价格(元）',
+    title: '商品价格(元）',
     dataIndex: 'price',
     render: renderColumns
   }, {
     key: 'image',
-    title: '产品图片',
+    title: '商品图片',
     dataIndex: 'image',
     render: (text, record) =>
       <img src={text} style={{ width: '60px' }} />

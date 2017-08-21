@@ -10,7 +10,9 @@ async function ajaxGoodsList(dispatch, params) {
       {
         identifier: params.identifier,
         name: params.name,
-        status: params.status
+        status: params.status,
+        page: params.tableCurrent,
+        rows: 10,
       },
       resolve,
       resolve,

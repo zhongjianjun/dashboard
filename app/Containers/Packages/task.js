@@ -15,7 +15,8 @@ import {
   ajaxDeleteColumn,
   ajaxAdd,
   ajaxEditInfo,
-  ajaxEdit
+  ajaxEdit,
+  ajaxGoodsList,
 } from './ajax'
 const { title, subTitle } = config()
 
@@ -206,7 +207,7 @@ const add = (value) =>
     }))
 
   }
-
+//套餐查看
 const toEdit = (id) =>
   async (dispatch, getState) => {
     console.log('toEdit', getState(), id)
@@ -364,6 +365,53 @@ const deleteColumn = (value) =>
         .catch((err) => console.error(err))
     }
   }
+//查看表格
+const showTable = (values) =>
+  async (dispatch, getState) => {
+    console.log('showTable', getState(), values)
+
+    dispatch(updateState({ ...values, tableLoading: true, buttonResetLoading: true }))
+    const params = getState().packages
+    await ajaxGoodsList(dispatch, { ...params })
+    console.log('done!')
+    dispatch(updateState({ tableLoading: false, buttonResetLoading: false }))
+
+  }
+//筛选表格
+const searchAdList = (values) =>
+  async (dispatch, getState) => {
+    console.log('searchAdList', getState(), values)
+    dispatch(updateState({ ...values, tableLoading: true, buttonSearchLoading: true }))
+    const params = getState().packages
+    await ajaxGoodsList(dispatch, { ...params })
+    console.log('done!')
+    dispatch(updateState({ tableLoading: false, buttonSearchLoading: false }))
+  }
+//重置表格
+const resetAdList = (values) =>
+  async (dispatch, getState) => {
+    console.log('resetAdList', getState(), values)
+    dispatch(updateState({ ...values, tableLoading: true, buttonResetLoading: true }))
+    const params = getState().packages
+    await ajaxGoodsList(dispatch, { ...params })
+    console.log('done!')
+    dispatch(updateState({ tableLoading: false, buttonResetLoading: false }))
+  }
+//弹框商品选择
+const selectGoodsList = (values) =>
+  async (dispatch, getState) => {
+    console.log('selectGoodsList', getState(), values)
+    
+    const arr1 = getState().packages.selectedRows
+    console.log('selectedGoods',arr1);
+
+    dispatch(updateState({
+      modalCommodityVisible: false,
+      selectedGoods: arr1,
+    }))
+
+  }
+
 
 export {
   updateState,
@@ -379,4 +427,8 @@ export {
   checkColumn,
   deleteColumn,
   editColumn,
+  showTable,
+  searchAdList,
+  resetAdList,
+  selectGoodsList,
 }

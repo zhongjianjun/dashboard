@@ -62,6 +62,22 @@ const state = {
       image_intro: 'formIntro',
     }]
   },
+  formFurniturePrice: '',
+  formFurnitureNum: '',
+  modalCommodityVisible: false,
+  //按钮
+  buttonAddLoading: false,
+  buttonSearchLoading: false,
+  buttonResetLoading: false,
+  //表格
+  tableData2: [],
+  //商品列表接口请求参数
+  identifier: '',
+  name: '',
+  status: 1,
+  selectedGoods: [],
+  selectedRows:[],
+  unit_price: '',//套餐价格
 }
 
 export default state
