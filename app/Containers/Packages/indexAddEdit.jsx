@@ -67,12 +67,14 @@ function Component({ dispatch, props, app }) {
     formSurplus: props.formSurplus,
     buttonOkLoading: props.formSaveLoading,
     buttonOkDisabled: props.formSaveDisabled,
+
     formFurniturePrice: props.formFurniturePrice,//家居价格
     formFurnitureNum: props.formFurnitureNum,//家居件数
-    selectedGoods: props.selectedGoods,//选择的商品数据
-    unit_price: props.unit_price,//套餐价格
+    formGoods: props.formGoods ? props.formGoods : [],//选择的商品数据
+    formRenovationPrice: props.formRenovationPrice,//套餐价格
+
     // buttonCancelLoading: props.buttonResetLoading,
-    onOk(value) {
+    onOk(value) {//新增和编辑
       notRepeating(
         () => {
           if (props.formType === 'add') {
@@ -85,10 +87,10 @@ function Component({ dispatch, props, app }) {
         }
       )
     },
-    changeFormClass(value) {
+    changeFormClass(value) {//切换套餐类型
       dispatch(updateState(value))
     },
-    onCancel(value) {
+    onCancel(value) {//返回
       console.log('onCancel')
     },
     onOpenModal(){//点击显示弹框
@@ -96,7 +98,7 @@ function Component({ dispatch, props, app }) {
       dispatch(updateState({ modalCommodityVisible: true }))
     }
   }
-
+  //新增栏目显示
   const buttonProps = {
     className: styles.button,
     type: "primary",
@@ -112,7 +114,7 @@ function Component({ dispatch, props, app }) {
       dispatch(updateState({ modalIntroVisible: false }))
     }
   }
-
+  //新增栏目传参
   const modalColumnsProps = {
     id: props.modalColumsId,
     data: props.modalColumnsStyles,
@@ -167,7 +169,7 @@ function Component({ dispatch, props, app }) {
       notRepeating(() => dispatch(resetAdList(values)))
     },
     onChange(selectedRowKeys, selectedRows){
-      dispatch(updateState({ selectedRows: selectedRows }))
+      dispatch(updateState({ goods_id: selectedRowKeys,selectedRows: selectedRows }))
     }
   }
 

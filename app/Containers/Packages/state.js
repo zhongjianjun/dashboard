@@ -34,7 +34,7 @@ const state = {
   formName: '',
   formSort: '',
   formImage: [],
-  formPrice: '',
+  formPrice: '',//套餐价格type为1和3的时候一定要填
   formQuota: '',
   formSurplus: '',
   formSaveLoading: false,
@@ -62,8 +62,12 @@ const state = {
       image_intro: 'formIntro',
     }]
   },
-  formFurniturePrice: '',
-  formFurnitureNum: '',
+
+  formFurniturePrice: '',//家居价格
+  formFurnitureNum: '',//家居件数
+  formGoods:[],//家居关联商品
+  formRenovationPrice: '',//套餐价格
+
   modalCommodityVisible: false,
   //按钮
   buttonAddLoading: false,
@@ -75,9 +79,8 @@ const state = {
   identifier: '',
   name: '',
   status: 1,
-  selectedGoods: [],
+  goods_id:[],
   selectedRows:[],
-  unit_price: '',//套餐价格
 }
 
 export default state

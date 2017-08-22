@@ -12,7 +12,7 @@ async function ajaxGoodsList(dispatch, params) {
         name: params.name,
         status: params.status,
         page: params.tableCurrent,
-        rows: 10,
+        pagesize: 10,
       },
       resolve,
       resolve,

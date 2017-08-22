@@ -66,14 +66,19 @@ async function ajaxAdd(dispatch, value) {
   await new Promise((resolve, reject) =>
     ajax(
       'website/package/add', {
-        buy_url: value.formUrl,
-        image: (value.formImage) ? value.formImage[0] : '',
-        name: value.formName,
-        quota: value.formQuota,
-        sort_order: value.formSort,
-        surplus: value.formSurplus,
-        type: value.formClass,
-        unit_price: value.formPrice ? value.formPrice : '1',
+        buy_url: value.formUrl,//家居url,type为2和3一定要填
+        image: (value.formImage) ? value.formImage[0] : '',//套餐首图
+        name: value.formName,//套餐名称
+        quota: value.formQuota,//限额
+        sort_order: value.formSort,//排序
+        surplus: value.formSurplus,//剩余
+        type: value.formClass,//套餐类型
+        unit_price: value.formPrice ? value.formPrice : '1',//套餐价格,type为1和3的时候一定要填
+
+        furniture_price: value.formFurniturePrice,//家居价格，type为2和3一定要填
+        furniture_num: value.formFurnitureNum,//家居件数，type为2和3一定要填
+        goods: value.formGoods,//家居关联商品
+        renovation_price: value.formRenovationPrice,//家装价格，type为3时一定要填
       },
       reject, reject,
       (response) => {
@@ -97,19 +102,25 @@ async function ajaxEditInfo(dispatch, id) {
       reject, reject,
       (response) => {
         dispatch(updateState({
-          formName: response.data.name,
-          formSort: response.data.sort_order,
-          formImage: response.data.image ? [response.data.image] : [],
-          formUrl: response.data.buy_url,
+          formName: response.data.name,//套餐名称
+          formSort: response.data.sort_order,//排序
+          formImage: response.data.image ? [response.data.image] : [],//套餐首图
+          formUrl: response.data.buy_url,//家居套餐购买url,当type为2时，有返回值
           formClass: String(response.data.type),
           formPrice: String(response.data.unit_price),
           formQuota: String(response.data.quota),
           formSurplus: String(response.data.surplus),
-          columnsStyles: response.data.columns,
+          columnsStyles: response.data.columns,//套餐栏目
           formStatus: response.data.status,
           formIsReco: response.data.is_reco,
           formSaveLoading: false,
           formAddColumnLoading: false,
+
+          formFurniturePrice: response.data.furniture_price,//家居价格
+          formFurnitureNum: response.data.furniture_num,//家居件数
+          formGoods: response.data.goods,//家居关联商品
+          formRenovationPrice: response.data.renovation_price,//家装价格
+
         }))
         resolve()
       }
@@ -130,6 +141,12 @@ async function ajaxEdit(dispatch, value) {
         surplus: value.formSurplus,
         type: value.formClass,
         unit_price: value.formPrice ? value.formPrice : '1',
+
+        furniture_price: value.formFurniturePrice,//家居价格，type为2和3一定要填
+        furniture_num: value.formFurnitureNum,//家居件数，type为2和3一定要填
+        goods: value.formGoods,//家居关联商品
+        renovation_price: value.formRenovationPrice,//家装价格，type为3时一定要填
+
       },
       reject, reject, resolve
     )

@@ -6,7 +6,7 @@ import styles from './Form.pcss'
 
 function Component({
   form, buttonOkDisabled, buttonOkLoading,
-  formName, formImage, formQuota, formPrice, formSurplus, formSort, formClass, formClasses, formUrl, formFurniturePrice, formFurnitureNum, selectedGoods, unit_price,
+  formName, formImage, formQuota, formPrice, formSurplus, formSort, formClass, formClasses, formUrl, formFurniturePrice, formFurnitureNum, formRenovationPrice, formGoods,
   onOk, changeFormClass, onOpenModal
  }) {
   process.env.NODE_ENV === 'production' || console.log(formClasses)
@@ -35,12 +35,31 @@ function Component({
     },
   }
 
+  const generateImagesArray = (values) => {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('generateImagesArray', values)
+    }
+
+    let array = [];
+    for(var i =0;i< formGoods.length; i++ ){
+      if (values[`tc_num${i}`]) {
+        array.push({
+          goods_id: formGoods[i].id,
+          num: values[`tc_num${i}`],
+        })
+      }
+    }
+    return array
+  }
+
   const handleOk = (e) =>
     form.validateFields((err, values) => {
       e.preventDefault()
       console.warn('handleOk: ', {
         ...values,
+        formGoods: generateImagesArray(values),
       })
+      
       if (values.formQuota < values.formSurplus) {
         message.warn('剩余不能比限额多')
         return
@@ -48,6 +67,7 @@ function Component({
       if (!err) {
         onOk({
           ...values,
+          formGoods: generateImagesArray(values),
         })
       }
     })
@@ -130,22 +150,7 @@ function Component({
             ?
             <div>
 
-              <Form.Item label="URL" {...formItemLayout}>
-                {form.getFieldDecorator('formUrl', {
-                  initialValue: formUrl,
-                  rules: [
-                    { required: true, message: '值不能为空!' },
-                    {
-                      pattern: /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/g,
-                      message: '请输入正确的url!'
-                    },
-                  ],
-                })(
-                  <Input type="text" placeholder="请输入url" style={{ maxWidth: '50%' }} />
-                  )}
-              </Form.Item>
-
-              <Form.Item label="家居价格" {...formItemLayout}>
+            <Form.Item label="家居价格" {...formItemLayout}>
                 {form.getFieldDecorator('formFurniturePrice', {
                   initialValue: formFurniturePrice,
                   rules: [{ required: true, message: '请输入家居价格!' }],
@@ -162,27 +167,46 @@ function Component({
                   <Input type="text" addonAfter="件" placeholder="请输入家居件数" style={{ maxWidth: '50%' }} />
                   )}
               </Form.Item>
+              
+              <Form.Item label="URL" {...formItemLayout}>
+                {form.getFieldDecorator('formUrl', {
+                  initialValue: formUrl,
+                  rules: [
+                    { required: true, message: '值不能为空!' },
+                    {
+                      pattern: /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/g,
+                      message: '请输入正确的url!'
+                    },
+                  ],
+                })(
+                  <Input type="text" placeholder="请输入url" style={{ maxWidth: '50%' }} />
+                  )}
+              </Form.Item>
 
               <Form.Item label="家居产品" {...formItemLayout}>
-                {form.getFieldDecorator('selectedGoods', {
-                  rules: [{ required: true, message: '请选择商品!' }],
-                })(
                   <div>
                     <Button onClick={onOpenModal}>选择商品</Button>
                     <Row gutter={16} className={styles.goodslistbox}>
                       {
-                        selectedGoods.map((value, index) =>
+                        formGoods.map((value, index) =>
                           <Col span={6} key={index} className={styles.goodslist}>
                             <img src={value.image} alt={value.name} className={styles.goodsimg} />
                             <div className={styles.goodsname}>{value.name}</div>
-                            <div className={styles.goodsnum}>数量：<Input type="text" placeholder="请输入数量" value={value.num} style={{ width: '40%' }}/></div>
+                            <div className={styles.goodsnum}>数量：
+                            {form.getFieldDecorator(`tc_num${index}`, {
+                                rules: [{ required: true, message: '请输入数量!' }],
+                                initialValue: value.tc_num
+                              })(
+                              <Input type="text" placeholder="请输入数量" style={{ width: '40%' }} />
+                            )}
+                            </div>
                           </Col>
                         )
                       }
                     </Row>
                   </div>
-                  )}
               </Form.Item>
+              
             </div>
             : null
         }
@@ -191,9 +215,10 @@ function Component({
           formClass === '3'
             ?
             <div>
+
               <Form.Item label="套餐价格" {...formItemLayout}>
-                {form.getFieldDecorator('unit_price', {
-                  initialValue: unit_price,
+                {form.getFieldDecorator('formPrice', {
+                  initialValue: formPrice,
                   rules: [
                     { type: "string", pattern: /^[1-9]\d{0,5}$/, required: true, message: '最多输入六位正整数!' },
                   ],
@@ -203,28 +228,13 @@ function Component({
               </Form.Item>
 
               <Form.Item label="家装价格" {...formItemLayout}>
-                {form.getFieldDecorator('formPrice', {
-                  initialValue: formPrice,
+                {form.getFieldDecorator('formRenovationPrice', {
+                  initialValue: formRenovationPrice,
                   rules: [
                     { type: "string", pattern: /^[1-9]\d{0,5}$/, required: true, message: '最多输入六位正整数!' },
                   ],
                 })(
                   <Input type="text" addonAfter="元/㎡" placeholder="请输入家装价格" style={{ maxWidth: '50%' }} />
-                  )}
-              </Form.Item>
-
-              <Form.Item label="URL" {...formItemLayout}>
-                {form.getFieldDecorator('formUrl', {
-                  initialValue: formUrl,
-                  rules: [
-                    { required: true, message: '值不能为空!' },
-                    {
-                      pattern: /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/g,
-                      message: '请输入正确的url!'
-                    },
-                  ],
-                })(
-                  <Input type="text" placeholder="请输入url" style={{ maxWidth: '50%' }} />
                   )}
               </Form.Item>
 
@@ -246,26 +256,67 @@ function Component({
                   )}
               </Form.Item>
 
+              <Form.Item label="URL" {...formItemLayout}>
+                {form.getFieldDecorator('formUrl', {
+                  initialValue: formUrl,
+                  rules: [
+                    { required: true, message: '值不能为空!' },
+                    {
+                      pattern: /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/g,
+                      message: '请输入正确的url!'
+                    },
+                  ],
+                })(
+                  <Input type="text" placeholder="请输入url" style={{ maxWidth: '50%' }} />
+                  )}
+              </Form.Item>
+
               <Form.Item label="家居产品" {...formItemLayout}>
-                {form.getFieldDecorator('selectedGoods', {
+                  <div>
+                    <Button onClick={onOpenModal}>选择商品</Button>
+                    <Row gutter={16} className={styles.goodslistbox}>
+                      {
+                        formGoods.map((value, index) =>
+                          <Col span={6} key={index} className={styles.goodslist}>
+                            <img src={value.image} alt={value.name} className={styles.goodsimg} />
+                            <div className={styles.goodsname}>{value.name}</div>
+                            <div className={styles.goodsnum}>数量：
+                            {form.getFieldDecorator(`tc_num${index}`, {
+                                rules: [{ required: true, message: '请输入数量!' }],
+                                initialValue: value.tc_num
+                              })(
+                              <Input type="text" placeholder="请输入数量" style={{ width: '40%' }} />
+                            )}
+                            </div>
+                          </Col>
+                        )
+                      }
+                    </Row>
+                  </div>
+              </Form.Item>
+
+{/* 
+              <Form.Item label="家居产品" {...formItemLayout}>
+                {form.getFieldDecorator('formGoods', {
                   rules: [{ required: true, message: '请选择商品!' }],
                 })(
                   <div>
                     <Button onClick={onOpenModal}>选择商品</Button>
                     <Row gutter={16} className={styles.goodslistbox}>
                       {
-                        selectedGoods.map((value, index) =>
+                        formGoods.map((value, index) =>
                           <Col span={6} key={index} className={styles.goodslist}>
                             <img src={value.image} alt={value.name} className={styles.goodsimg} />
                             <div className={styles.goodsname}>{value.name}</div>
-                            <div className={styles.goodsnum}>数量：<Input type="text" placeholder="请输入数量" value={value.num} style={{ width: '40%' }}/></div>
+                            <div className={styles.goodsnum}>数量：<Input type="text" placeholder="请输入数量" defaultValue={value.tc_num} style={{ width: '40%' }} /></div>
                           </Col>
                         )
                       }
                     </Row>
                   </div>
                   )}
-              </Form.Item>
+              </Form.Item> */}
+
             </div>
             : null
         }

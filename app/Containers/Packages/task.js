@@ -100,6 +100,10 @@ const init = (value) =>
           formSaveLoading: false,
           formSaveDisabled: false,
           formAddColumnLoading: false,
+          formFurniturePrice: '',
+          formFurnitureNum: '',
+          formGoods: [],
+          formRenovationPrice: '',
         }))
         break
     }
@@ -181,31 +185,24 @@ const toggleStatus = (id, status) =>
   }
 
 /* ===== add/edit =====*/
-
+//套餐新增
 const add = (value) =>
   async (dispatch, getState) => {
     process.env.NODE_ENV === 'production' || console.log('add', getState(), value)
 
-    dispatch(updateState({
-      formSaveLoading: true
-    }))
+    dispatch(updateState({ formSaveLoading: true }))
     const params = getState().packages
 
-    await ajaxAdd(dispatch, {
-      ...value
-    })
+    await ajaxAdd(dispatch, { ...value })
       .then(() => {
         dispatch(updateState({ formSaveDisabled: true }))
-        dispatch(checkColumn())
+        dispatch(checkColumn())//控制右上角按钮可用不可用
         // message.destroy()
         message.success('新增成功')
       })
       .catch((err) => console.error(err))
 
-    dispatch(updateState({
-      formSaveLoading: false
-    }))
-
+    dispatch(updateState({ formSaveLoading: false }))
   }
 //套餐查看
 const toEdit = (id) =>
@@ -230,15 +227,13 @@ const toEdit = (id) =>
 
     // dispatch(updateState({modalLoading: false,}))
   }
-
+//套餐编辑
 const edit = (value) =>
   async (dispatch, getState) => {
     console.log('edit', getState(), value)
     const id = getState().packages.packageId
 
-    dispatch(updateState({
-      formSaveLoading: true
-    }))
+    dispatch(updateState({ formSaveLoading: true }))
 
     await ajaxEdit(dispatch, {
       ...value,
@@ -250,9 +245,7 @@ const edit = (value) =>
       })
       .catch((err) => console.error(err))
 
-    dispatch(updateState({
-      formSaveLoading: false,
-    }))
+    dispatch(updateState({ formSaveLoading: false, }))
   }
 
 /* ===== column =====*/
@@ -401,13 +394,12 @@ const resetAdList = (values) =>
 const selectGoodsList = (values) =>
   async (dispatch, getState) => {
     console.log('selectGoodsList', getState(), values)
-    
+
     const arr1 = getState().packages.selectedRows
-    console.log('selectedGoods',arr1);
 
     dispatch(updateState({
       modalCommodityVisible: false,
-      selectedGoods: arr1,
+      formGoods: arr1,
     }))
 
   }
